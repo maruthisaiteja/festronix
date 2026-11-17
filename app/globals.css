@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Syne:wght@700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-page: #06080C;
+  --accent: #12A4C4;
+}
+
+html {
+  background-color: var(--bg-page);
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--bg-page);
+  color: #EEF0F5;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #07080D;
+}
+::-webkit-scrollbar-thumb {
+  background: #1A1E28;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #252B3A;
+}
+
+/* Hide scrollbar for category lists */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

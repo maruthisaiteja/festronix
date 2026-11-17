@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String            @id @default(uuid())
+  username         String            @unique
+  passwordHash     String
+  name             String
+  role             String            @default("COORDINATOR") // "ADMIN" | "COORDINATOR"
+  phone            String?
+  assignedEventId  String?           // Null for ADMIN; event.id for COORDINATOR
+  assignedVenue    String?           // e.g. "Room 3020"
+  assignedEvent    Event?            @relation(fields: [assignedEventId], references: [id])
+  manualRegistrations Registration[] @relation("ManualRegistrar")
+  verifiedAttendances Registration[] @relation("AttendanceVerifier")
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+model Event {
+  id               String            @id // e.g. "smartathon", "cad-mania"
+  slug             String            @unique
+  title            String
+  category         String            // "Coding & Software", "Hardware & Electronics", etc.
+  trackTag         String
+  day              String            // "Day 1", "Day 2", "Both Days"
+  venue            String            // e.g. "Room 3020"
+  entryFee         Float             @default(0)
+  teamSize         String            // "Individual" | "2-4 Members"
+  maxCapacity      Int               @default(150)
+  coordinators     User[]
+  registrations    Registration[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+model Registration {
+  id               String            @id @default(uuid())
+  regCode          String            @unique // e.g. "FX26-3020-8492"
+  ticketToken      String            @unique // Cryptographic token for attendance QR
+  eventId          String
+  event            Event             @relation(fields: [eventId], references: [id])
+  
+  // Delegate Information
+  fullName         String
+  email            String
+  phone            String
+  college          String            @default("Vardhaman College of Engineering")
+  rollNumber       String
+  department       String
+  yearOfStudy      String            // "1st Year", "2nd Year", "3rd Year", "4th Year"
+  
+  // Team Metadata
+  isTeam           Boolean           @default(false)
+  teamName         String?
+  teamMembers      String?           // JSON array string
+  
+  // Registration Channel
+  registrationMode String            @default("ONLINE") // "ONLINE" | "OFFLINE_SPOT"
+  registeredById   String?
+  registeredBy     User?             @relation("ManualRegistrar", fields: [registeredById], references: [id])
+
+  // Payment State (OptiForge Engine)
+  paymentMode      String            @default("UPI_QR") // "UPI_QR" | "CASH" | "FREE"
+  paymentAmount    Float             @default(0)
+  paymentStatus    String            @default("PENDING_VERIFICATION") // "PENDING_VERIFICATION" | "VERIFIED" | "CASH_PAID" | "REJECTED"
+  utrNumber        String?           // 12-digit UPI Reference Number
+  verifiedAt       DateTime?
+  verifiedBy       String?
+
+  // Attendance State
+  attendanceStatus String            @default("ABSENT") // "ABSENT" | "PRESENT"
+  attendedAt       DateTime?
+  attendedByUserId String?
+  attendedByUser   User?             @relation("AttendanceVerifier", fields: [attendedByUserId], references: [id])
+
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  @@unique([eventId, rollNumber])
+  @@index([eventId, attendanceStatus])
+  @@index([paymentStatus])
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  action      String   // "PAYMENT_VERIFIED", "ATTENDANCE_MARKED", "SPOT_REGISTRATION", "LOGIN"
+  performedBy String
+  targetId    String?
+  details     String?  // JSON string
+  createdAt   DateTime @default(now())
+}

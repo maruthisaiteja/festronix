@@ -1,0 +1,16 @@
+{
+  "command": "node server.js",
+  "build_command": "npx prisma generate && npm run build",
+  "stack": "node18",
+  "env_variables": {
+    "NODE_ENV": "production",
+    "DATABASE_URL": "file:./festronix.db",
+    "JWT_SECRET": "festronix_sac_vce_secret_key_2026_december_super_jwt",
+    "NEXT_PUBLIC_UPI_ID": "9490298994-2@ybl",
+    "NEXT_PUBLIC_UPI_NAME": "Vardhaman College of Engineering",
+    "NEXT_PUBLIC_UPI_PHONE": "9490298994",
+    "ADMIN_DEFAULT_USERNAME": "admin_sac",
+    "ADMIN_DEFAULT_PASSWORD": "FestronixAdmin@2026"
+  },
+  "memory": 512
+}

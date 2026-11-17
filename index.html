@@ -1,0 +1,2928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FESTRONIX 2026 — Vardhaman College of Engineering</title>
+  <meta name="description" content="FESTRONIX 2026 — National Level Technical Fest organized by Vardhaman College of Engineering, Hyderabad. Two days of engineering, robotics, code sprints, and innovation.">
+
+  <!-- Favicon / Meta -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%2300E5FF'>⚡</text></svg>">
+
+  <!-- Google Fonts: Space Grotesk (Editorial Display), Plus Jakarta Sans (UI Body), JetBrains Mono (Telemetry/HUD), Caveat (Poster's signature script) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+
+  <!-- Three.js for 3D Interactive Cyber Core -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <style>
+    /* ═══════════════════════════════════════════════════════════════
+       DESIGN TOKENS & SYSTEM ROOT
+       Strict 4px/8px rhythm, pure obsidian palette, electric cyan energy
+       ═══════════════════════════════════════════════════════════════ */
+    :root {
+      /* Void Ramp */
+      --bg-void:         #030508;
+      --bg-page:         #06080f;
+      --bg-card:         #0c0f18;
+      --bg-raised:       #131724;
+      --bg-hover:        #181e2e;
+      
+      /* Glassmorphism System */
+      --glass-bg:        rgba(12, 16, 26, 0.65);
+      --glass-bg-hover:  rgba(18, 24, 38, 0.85);
+      --glass-border:    rgba(255, 255, 255, 0.08);
+      --glass-border-hi: rgba(0, 229, 255, 0.35);
+      --glass-specular:  rgba(255, 255, 255, 0.14);
+
+      /* Typography Neutrals */
+      --text-hero:       #ffffff;
+      --text-primary:    #eef2f8;
+      --text-secondary:  #94a1b8;
+      --text-muted:      #525d73;
+      --hairline:        rgba(255, 255, 255, 0.06);
+
+      /* Signature Poster Brand Accents */
+      --cyan:            #00e5ff;
+      --cyan-dim:        #0097a7;
+      --cyan-soft:       rgba(0, 229, 255, 0.08);
+      --cyan-glow:       rgba(0, 229, 255, 0.25);
+      --emerald:         #00ff9d;
+      --emerald-soft:    rgba(0, 255, 157, 0.1);
+      --amber:           #ffb020;
+
+      /* Font Families */
+      --font-display:    'Space Grotesk', -apple-system, sans-serif;
+      --font-ui:         'Plus Jakarta Sans', -apple-system, sans-serif;
+      --font-mono:       'JetBrains Mono', monospace;
+      --font-script:     'Caveat', cursive;
+
+      /* Motion & Radius */
+      --ease-out:        cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-spring:     cubic-bezier(0.34, 1.56, 0.64, 1);
+      --r-sm:            8px;
+      --r-md:            12px;
+      --r-lg:            18px;
+      --r-xl:            24px;
+      --r-pill:          9999px;
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--bg-void);
+      color-scheme: dark;
+    }
+
+    body {
+      font-family: var(--font-ui);
+      background-color: var(--bg-void);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Selection */
+    ::selection {
+      background: var(--cyan);
+      color: var(--bg-void);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       SUBTLE NOISE & VIGNETTE (Zenith-grade texture)
+       ═══════════════════════════════════════════════════════════════ */
+    .noise-overlay {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.028;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    }
+
+    .vignette-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      background: radial-gradient(circle at 50% 50%, transparent 60%, rgba(3, 5, 8, 0.8) 100%);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       INTERACTIVE CANVAS BACKGROUNDS
+       Three.js Core + Procedural Topographic Contours (Poster-Matched)
+       ═══════════════════════════════════════════════════════════════ */
+    #topo-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.45;
+    }
+
+    #three-hero-container {
+      position: absolute;
+      top: 50%;
+      right: 5%;
+      transform: translateY(-50%);
+      width: 520px;
+      height: 520px;
+      pointer-events: auto;
+      z-index: 2;
+    }
+
+    @media (max-width: 1100px) {
+      #three-hero-container {
+        position: relative;
+        top: 0;
+        right: 0;
+        transform: none;
+        width: 320px;
+        height: 320px;
+        margin: 20px auto 0;
+      }
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       FLOATING GLASS HUD NAVBAR (Zenith Reference)
+       ═══════════════════════════════════════════════════════════════ */
+    .nav-anchor {
+      position: fixed;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(94vw, 1140px);
+      z-index: 100;
+    }
+
+    .nav-pill {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+      padding: 0 10px 0 20px;
+      background: rgba(8, 11, 18, 0.72);
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--r-pill);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      transition: border-color 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
+    }
+
+    .nav-pill:hover {
+      border-color: rgba(255, 255, 255, 0.14);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text-hero);
+    }
+
+    .nav-badge-vce {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      padding: 4px 8px;
+      background: var(--bg-raised);
+      border: 1px solid rgba(0, 229, 255, 0.25);
+      border-radius: 6px;
+      color: var(--cyan);
+    }
+
+    .nav-brand-title {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-hero);
+    }
+
+    .nav-brand-title span {
+      color: var(--cyan);
+    }
+
+    .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      list-style: none;
+    }
+
+    .nav-link {
+      font-family: var(--font-ui);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: var(--r-pill);
+      transition: color 0.18s var(--ease-out), background 0.18s var(--ease-out);
+    }
+
+    .nav-link:hover {
+      color: var(--text-hero);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .audio-btn {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--glass-border);
+      border-radius: 50%;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s var(--ease-out);
+    }
+
+    .audio-btn:hover {
+      color: var(--cyan);
+      border-color: var(--cyan);
+      background: var(--cyan-soft);
+    }
+
+    .nav-cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 40px;
+      padding: 0 20px;
+      background: var(--cyan);
+      color: var(--bg-void);
+      font-family: var(--font-ui);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      border: none;
+      border-radius: var(--r-pill);
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(0, 229, 255, 0.35);
+      transition: transform 0.16s var(--ease-spring), box-shadow 0.16s var(--ease-out), background 0.16s;
+    }
+
+    .nav-cta-btn:hover {
+      transform: scale(0.97);
+      background: #33ebff;
+      box-shadow: 0 6px 28px rgba(0, 229, 255, 0.5);
+    }
+
+    .nav-mobile-toggle {
+      display: none;
+      background: transparent;
+      border: none;
+      color: var(--text-hero);
+      cursor: pointer;
+      padding: 8px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       MOBILE NAV DRAWER
+       ═══════════════════════════════════════════════════════════════ */
+    .mobile-drawer {
+      position: fixed;
+      top: 84px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-10px);
+      width: min(92vw, 420px);
+      background: rgba(10, 14, 24, 0.96);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--r-xl);
+      padding: 16px 20px;
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 99;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8);
+    }
+
+    .mobile-drawer.open {
+      display: flex;
+      transform: translateX(-50%) translateY(0);
+      animation: drawerSlide 0.25s var(--ease-out);
+    }
+
+    @keyframes drawerSlide {
+      from { opacity: 0; transform: translateX(-50%) translateY(-12px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    .mobile-drawer a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 12px 6px;
+      border-bottom: 1px solid var(--hairline);
+      transition: color 0.15s;
+    }
+
+    .mobile-drawer a:last-child {
+      border-bottom: none;
+    }
+
+    .mobile-drawer a:hover {
+      color: var(--cyan);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       HERO SECTION — MASTERPIECE COMPOSITION
+       ═══════════════════════════════════════════════════════════════ */
+    .hero-section {
+      position: relative;
+      z-index: 2;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 140px 24px 96px;
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+
+    .hero-content {
+      max-width: 720px;
+      position: relative;
+      z-index: 3;
+    }
+
+    /* Live Telemetry Ping Badge */
+    .hero-telemetry-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 16px;
+      background: rgba(14, 18, 28, 0.7);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--r-pill);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 28px;
+    }
+
+    .telemetry-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--emerald);
+      box-shadow: 0 0 10px var(--emerald);
+      animation: radarPulse 2s infinite ease-in-out;
+    }
+
+    @keyframes radarPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.4; }
+    }
+
+    .hero-college-title {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hero-title-group {
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    /* Giant Poster Title with 3D Depth */
+    .hero-main-title {
+      font-family: var(--font-display);
+      font-size: clamp(54px, 9.5vw, 102px);
+      font-weight: 700;
+      line-height: 0.94;
+      letter-spacing: -0.04em;
+      color: var(--text-hero);
+      text-transform: uppercase;
+      text-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
+    }
+
+    .hero-main-title .cyan-spark {
+      color: var(--cyan);
+      display: inline-block;
+      text-shadow: 0 0 40px rgba(0, 229, 255, 0.45);
+      position: relative;
+    }
+
+    .hero-year-row {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin-top: 4px;
+    }
+
+    .hero-year {
+      font-family: var(--font-mono);
+      font-size: clamp(38px, 6.5vw, 72px);
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      color: #3a4254;
+      line-height: 1;
+    }
+
+    /* Signature "coming soon..." element straight from the user's poster! */
+    .poster-coming-soon {
+      font-family: var(--font-script);
+      font-size: clamp(28px, 4.5vw, 42px);
+      font-weight: 600;
+      color: #eeddbb;
+      transform: rotate(-3deg);
+      opacity: 0.92;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .hero-subtitle {
+      font-size: clamp(16px, 2vw, 19px);
+      color: var(--text-secondary);
+      line-height: 1.65;
+      max-width: 580px;
+      margin: 28px 0 38px;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn-hero-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      height: 52px;
+      padding: 0 28px;
+      background: var(--text-hero);
+      color: var(--bg-void);
+      font-family: var(--font-ui);
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: var(--r-md);
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(255, 255, 255, 0.15), inset 0 1px 0 #fff;
+      transition: transform 0.16s var(--ease-spring), opacity 0.16s;
+    }
+
+    .btn-hero-primary:hover {
+      transform: scale(0.97);
+      opacity: 0.92;
+    }
+
+    .btn-hero-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      height: 52px;
+      padding: 0 24px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      color: var(--text-primary);
+      font-family: var(--font-ui);
+      font-size: 14px;
+      font-weight: 600;
+      border: 1px solid var(--glass-border);
+      border-radius: var(--r-md);
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.16s, border-color 0.16s, transform 0.16s;
+    }
+
+    .btn-hero-secondary:hover {
+      background: var(--bg-raised);
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: scale(0.97);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       TELEMETRY COUNTDOWN HUD (ACTIVE FUTURE DATE)
+       ═══════════════════════════════════════════════════════════════ */
+    .countdown-hud {
+      margin-top: 48px;
+      padding: 20px 24px;
+      background: rgba(10, 14, 22, 0.7);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--r-lg);
+      max-width: 520px;
+    }
+
+    .countdown-hud-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .countdown-hud-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--cyan);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .countdown-hud-location {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .countdown-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .countdown-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 8px;
+      background: rgba(16, 22, 34, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: var(--r-sm);
+    }
+
+    .countdown-val {
+      font-family: var(--font-mono);
+      font-size: 26px;
+      font-weight: 600;
+      color: var(--text-hero);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .countdown-lbl {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-top: 6px;
+      letter-spacing: 0.05em;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       METRIC TICKER ROW
+       ═══════════════════════════════════════════════════════════════ */
+    .metric-ticker {
+      display: flex;
+      gap: 40px;
+      margin-top: 36px;
+      flex-wrap: wrap;
+    }
+
+    .metric-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .metric-num {
+      font-family: var(--font-mono);
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--text-hero);
+      line-height: 1;
+    }
+
+    .metric-lbl {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       UNIVERSAL GLASS CARD SYSTEM (3D TILT & SPECULAR SHEEN)
+       ═══════════════════════════════════════════════════════════════ */
+    .glass-card {
+      position: relative;
+      background: var(--glass-bg);
+      backdrop-filter: blur(24px) saturate(160%);
+      -webkit-backdrop-filter: blur(24px) saturate(160%);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--r-lg);
+      padding: 28px;
+      overflow: hidden;
+      transition: border-color 0.25s var(--ease-out), transform 0.35s var(--ease-out), box-shadow 0.25s;
+      will-change: transform;
+    }
+
+    /* Dynamic cursor spotlight glow */
+    .glass-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle 300px at var(--mouse-x, -500px) var(--mouse-y, -500px), rgba(0, 229, 255, 0.1), transparent 80%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      border-radius: inherit;
+    }
+
+    .glass-card:hover::after {
+      opacity: 1;
+    }
+
+    .glass-card:hover {
+      border-color: var(--glass-border-hi);
+      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.6), 0 0 24px rgba(0, 229, 255, 0.08);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       SECTION HEADERS & INDEXING (Zenith Design Pattern)
+       ═══════════════════════════════════════════════════════════════ */
+    .section-wrap {
+      position: relative;
+      z-index: 2;
+      padding: 110px 24px;
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+
+    .section-header-box {
+      margin-bottom: 56px;
+    }
+
+    .section-index {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--cyan);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .section-index::before {
+      content: '';
+      width: 14px;
+      height: 1px;
+      background: var(--cyan);
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 5vw, 48px);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      color: var(--text-hero);
+    }
+
+    .section-title span.accent {
+      color: var(--cyan);
+    }
+
+    .section-desc {
+      font-size: 16px;
+      color: var(--text-secondary);
+      max-width: 580px;
+      line-height: 1.7;
+      margin-top: 14px;
+    }
+
+    .section-divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--hairline), var(--hairline), transparent);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       SECTION 01: WHY FESTRONIX (BENTO CARDS & HIGHLIGHTS)
+       ═══════════════════════════════════════════════════════════════ */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 20px;
+    }
+
+    .bento-col-8 {
+      grid-column: span 8;
+    }
+
+    .bento-col-4 {
+      grid-column: span 4;
+    }
+
+    .bento-col-6 {
+      grid-column: span 6;
+    }
+
+    @media (max-width: 900px) {
+      .bento-col-8, .bento-col-4, .bento-col-6 {
+        grid-column: span 12;
+      }
+    }
+
+    .highlight-icon-box {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--r-sm);
+      background: rgba(0, 229, 255, 0.08);
+      border: 1px solid rgba(0, 229, 255, 0.2);
+      display: grid;
+      place-items: center;
+      color: var(--cyan);
+      margin-bottom: 20px;
+    }
+
+    .bento-title {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-hero);
+      margin-bottom: 10px;
+    }
+
+    .bento-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    .bento-tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .bento-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 4px 10px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--hairline);
+      border-radius: 6px;
+      color: var(--text-muted);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       SECTION 02: EVENT DOMAIN TRACKS & ARENAS (ZENITH EXPANDABLE)
+       ═══════════════════════════════════════════════════════════════ */
+    .track-filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+
+    .track-tab-btn {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 8px 18px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--r-pill);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s var(--ease-out);
+    }
+
+    .track-tab-btn:hover {
+      color: var(--text-hero);
+      background: var(--bg-raised);
+    }
+
+    .track-tab-btn.active {
+      color: var(--bg-void);
+      background: var(--cyan);
+      border-color: var(--cyan);
+      font-weight: 700;
+    }
+
+    .events-showcase-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 980px) {
+      .events-showcase-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .events-showcase-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .event-card-item {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+    }
+
+    .event-top-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .event-category-chip {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--cyan);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .event-team-chip {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      padding: 3px 8px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 4px;
+    }
+
+    .event-item-title {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-hero);
+      margin-bottom: 8px;
+    }
+
+    .event-item-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 20px;
+      flex-grow: 1;
+    }
+
+    .event-bottom-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 16px;
+      border-top: 1px solid var(--hairline);
+    }
+
+    .event-prize-tag {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--emerald);
+    }
+
+    .event-details-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-ui);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--cyan);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: gap 0.18s;
+    }
+
+    .event-details-trigger:hover {
+      gap: 10px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       SECTION 03: 2-DAY INTERACTIVE TIMELINE / SCHEDULE
+       ═══════════════════════════════════════════════════════════════ */
+    .schedule-tab-switch {
+      display: flex;
+      background: rgba(12, 16, 26, 0.8);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--r-md);
+      padding: 4px;
+      max-width: 380px;
+      margin-bottom: 40px;
+    }
+
+    .schedule-tab {
+      flex: 1;
+      padding: 10px 16px;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      border: none;
+      background: transparent;
+      border-radius: var(--r-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .schedule-tab.active {
+      background: var(--bg-raised);
+      color: var(--cyan);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+    }
+
+    .timeline-container {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-width: 880px;
+    }
+
+    .timeline-row {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 20px 24px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--r-md);
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .timeline-row:hover {
+      border-color: rgba(0, 229, 255, 0.3);
+      transform: translateX(4px);
+    }
+
+    .timeline-time-col {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--cyan);
+      min-width: 110px;
+    }
+
+    .timeline-info-col {
+      flex-grow: 1;
+    }
+
+    .timeline-slot-title {
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-hero);
+      margin-bottom: 2px;
+    }
+
+    .timeline-venue-chip {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .timeline-status-pill {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      background: rgba(0, 255, 157, 0.08);
+      color: var(--emerald);
+      border: 1px solid rgba(0, 255, 157, 0.2);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       SECTION 04: VENUE & TELEMETRY
+       ═══════════════════════════════════════════════════════════════ */
+    .venue-glass-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      align-items: center;
+    }
+
+    @media (max-width: 900px) {
+      .venue-glass-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .venue-details-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin: 28px 0;
+    }
+
+    .venue-detail-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .venue-icon-round {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(0, 229, 255, 0.08);
+      border: 1px solid rgba(0, 229, 255, 0.2);
+      display: grid;
+      place-items: center;
+      color: var(--cyan);
+      flex-shrink: 0;
+    }
+
+    .venue-map-frame {
+      width: 100%;
+      height: 380px;
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .venue-map-frame iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      filter: grayscale(0.85) brightness(0.6) contrast(1.2);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       SECTION 05: FAQ ACCORDION (ZENITH SMOOTH PHYSICS)
+       ═══════════════════════════════════════════════════════════════ */
+    .faq-layout-split {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 56px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .faq-layout-split {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+    }
+
+    .faq-accordion-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .faq-row {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--r-md);
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .faq-row.active {
+      border-color: rgba(0, 229, 255, 0.35);
+    }
+
+    .faq-header-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 20px 24px;
+      background: transparent;
+      border: none;
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-hero);
+      text-align: left;
+      cursor: pointer;
+      transition: color 0.18s;
+    }
+
+    .faq-row.active .faq-header-btn {
+      color: var(--cyan);
+    }
+
+    .faq-icon-rotator {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 50%;
+      color: var(--text-muted);
+      transition: transform 0.25s var(--ease-out), color 0.25s, background 0.25s;
+      flex-shrink: 0;
+    }
+
+    .faq-row.active .faq-icon-rotator {
+      transform: rotate(45deg);
+      color: var(--cyan);
+      background: var(--cyan-soft);
+    }
+
+    .faq-body-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s var(--ease-out);
+      padding: 0 24px;
+    }
+
+    .faq-row.active .faq-body-content {
+      max-height: 220px;
+      padding-bottom: 20px;
+    }
+
+    .faq-body-content p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       SECTION 06: REGISTRATION PASS DECK
+       ═══════════════════════════════════════════════════════════════ */
+    .passes-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 900px) {
+      .passes-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .pass-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+      position: relative;
+    }
+
+    .pass-card.featured {
+      border-color: rgba(0, 229, 255, 0.4);
+      box-shadow: 0 20px 60px rgba(0, 229, 255, 0.12);
+    }
+
+    .featured-ribbon {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      background: var(--cyan);
+      color: var(--bg-void);
+      border-radius: var(--r-pill);
+    }
+
+    .pass-tier-name {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-hero);
+      margin-bottom: 6px;
+    }
+
+    .pass-tier-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+
+    .pass-price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 24px;
+    }
+
+    .pass-price {
+      font-family: var(--font-mono);
+      font-size: 34px;
+      font-weight: 700;
+      color: var(--text-hero);
+    }
+
+    .pass-perks-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+      flex-grow: 1;
+    }
+
+    .pass-perk-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .pass-perk-item i {
+      color: var(--cyan);
+      flex-shrink: 0;
+    }
+
+    .btn-pass-action {
+      width: 100%;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: var(--bg-raised);
+      border: 1px solid var(--hairline);
+      border-radius: var(--r-md);
+      color: var(--text-primary);
+      font-family: var(--font-ui);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s var(--ease-out);
+    }
+
+    .btn-pass-action:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .pass-card.featured .btn-pass-action {
+      background: var(--cyan);
+      color: var(--bg-void);
+      border: none;
+      font-weight: 700;
+      box-shadow: 0 4px 20px rgba(0, 229, 255, 0.35);
+    }
+
+    .pass-card.featured .btn-pass-action:hover {
+      background: #33ebff;
+      transform: scale(0.98);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       INTERACTIVE EVENT RULES MODAL / DRAWER
+       ═══════════════════════════════════════════════════════════════ */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 4, 8, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      z-index: 200;
+      display: none;
+      place-items: center;
+      padding: 20px;
+    }
+
+    .modal-backdrop.open {
+      display: grid;
+    }
+
+    .modal-box {
+      width: min(94vw, 680px);
+      max-height: 85vh;
+      overflow-y: auto;
+      background: rgba(14, 18, 28, 0.98);
+      border: 1px solid rgba(0, 229, 255, 0.3);
+      border-radius: var(--r-xl);
+      padding: 36px;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 40px rgba(0, 229, 255, 0.15);
+      position: relative;
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--hairline);
+      color: var(--text-secondary);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .modal-close-btn:hover {
+      color: var(--text-hero);
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .modal-category-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--cyan);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .modal-event-title {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-hero);
+      margin-bottom: 14px;
+    }
+
+    .modal-info-pills {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .modal-pill {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--hairline);
+      color: var(--text-secondary);
+    }
+
+    .modal-section-h4 {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-hero);
+      margin: 20px 0 8px;
+    }
+
+    .modal-guidelines-list {
+      padding-left: 20px;
+      color: var(--text-secondary);
+      font-size: 13.5px;
+      line-height: 1.7;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       FOOTER & GIGANTIC WATERMARK (Zenith Signature)
+       ═══════════════════════════════════════════════════════════════ */
+    .site-footer {
+      position: relative;
+      z-index: 2;
+      padding: 96px 24px 40px;
+      border-top: 1px solid var(--hairline);
+      overflow: hidden;
+      background: linear-gradient(180deg, transparent, rgba(6, 8, 14, 0.9) 80%);
+    }
+
+    .footer-watermark-text {
+      font-family: var(--font-display);
+      font-size: clamp(72px, 14vw, 180px);
+      font-weight: 800;
+      letter-spacing: -0.05em;
+      color: rgba(255, 255, 255, 0.02);
+      text-align: center;
+      line-height: 0.9;
+      pointer-events: none;
+      user-select: none;
+      margin-bottom: 40px;
+      text-transform: uppercase;
+    }
+
+    .footer-content-row {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 40px;
+    }
+
+    .footer-brand-col {
+      max-width: 360px;
+    }
+
+    .footer-college-name {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-hero);
+      margin-bottom: 6px;
+    }
+
+    .footer-sub-org {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .footer-links-group {
+      display: flex;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+
+    .footer-col-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--cyan);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .footer-nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-nav-list a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.18s;
+    }
+
+    .footer-nav-list a:hover {
+      color: var(--text-hero);
+    }
+
+    .footer-bottom-baseline {
+      max-width: 1240px;
+      margin: 64px auto 0;
+      padding-top: 24px;
+      border-top: 1px solid var(--hairline);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       SCROLL REVEAL ANIMATIONS
+       ═══════════════════════════════════════════════════════════════ */
+    .reveal-elem {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out);
+    }
+
+    .reveal-elem.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Overlays -->
+  <div class="noise-overlay"></div>
+  <div class="vignette-overlay"></div>
+
+  <!-- Procedural Topographic Wave Canvas (Poster Inspiration) -->
+  <canvas id="topo-canvas"></canvas>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       FLOATING GLASS HUD NAVBAR
+       ═══════════════════════════════════════════════════════════════ -->
+  <div class="nav-anchor">
+    <nav class="nav-pill">
+      <a href="#hero" class="nav-brand">
+        <span class="nav-badge-vce">VCE</span>
+        <span class="nav-brand-title">FESTRONIX<span>'26</span></span>
+      </a>
+
+      <ul class="nav-menu">
+        <li><a href="#about" class="nav-link">About</a></li>
+        <li><a href="#events" class="nav-link">Events</a></li>
+        <li><a href="#schedule" class="nav-link">Schedule</a></li>
+        <li><a href="#venue" class="nav-link">Venue</a></li>
+        <li><a href="#faq" class="nav-link">FAQ</a></li>
+      </ul>
+
+      <div class="nav-right">
+        <button class="audio-btn" id="audioToggleBtn" title="Tactile Sound Interface" aria-label="Toggle Sound">
+          <i data-lucide="volume-2" width="16" height="16"></i>
+        </button>
+
+        <a href="#passes" class="nav-cta-btn">
+          <span>Claim Pass</span>
+          <i data-lucide="arrow-up-right" width="14" height="14"></i>
+        </a>
+
+        <button class="nav-mobile-toggle" onclick="toggleMobileDrawer()" aria-label="Open Navigation">
+          <i data-lucide="menu" width="20" height="20"></i>
+        </button>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Mobile Drawer -->
+  <div class="mobile-drawer" id="mobileDrawer">
+    <a href="#about" onclick="toggleMobileDrawer()">About Festronix</a>
+    <a href="#events" onclick="toggleMobileDrawer()">15+ Competitions & Arenas</a>
+    <a href="#schedule" onclick="toggleMobileDrawer()">2-Day Schedule</a>
+    <a href="#venue" onclick="toggleMobileDrawer()">Campus & Transit Map</a>
+    <a href="#faq" onclick="toggleMobileDrawer()">Questions & Clarifications</a>
+    <a href="#passes" onclick="toggleMobileDrawer()" style="color: var(--cyan); font-weight: 600;">Register for Passes ↗</a>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       HERO SECTION — MASTERPIECE COMPOSITION
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="hero-section" id="hero">
+    <div class="hero-content">
+
+      <div class="reveal-elem">
+        <div class="hero-telemetry-badge">
+          <span class="telemetry-dot"></span>
+          <span>VCE STUDENT AFFAIRS CELL · NATIONAL LEVEL TECHNICAL FEST</span>
+        </div>
+      </div>
+
+      <p class="hero-college-title reveal-elem">
+        <span>VARDHAMAN COLLEGE OF ENGINEERING PRESENTS</span>
+      </p>
+
+      <div class="hero-title-group reveal-elem">
+        <h1 class="hero-main-title">
+          <span class="cyan-spark">FESTRONIX</span>
+        </h1>
+        <div class="hero-year-row">
+          <span class="hero-year">2026</span>
+          <span class="poster-coming-soon">coming soon...</span>
+        </div>
+      </div>
+
+      <p class="hero-subtitle reveal-elem">
+        Two days of high-intensity competitive programming, autonomous robotics,
+        circuit reverse-engineering, and groundbreaking innovation. Organized on
+        campus at Vardhaman College of Engineering, Hyderabad.
+      </p>
+
+      <div class="hero-actions reveal-elem">
+        <a href="#passes" class="btn-hero-primary">
+          <span>Register for Festronix</span>
+          <i data-lucide="arrow-right" width="16" height="16"></i>
+        </a>
+        <a href="#events" class="btn-hero-secondary">
+          <i data-lucide="layers" width="16" height="16"></i>
+          <span>Explore 15+ Arenas</span>
+        </a>
+      </div>
+
+      <!-- Telemetry Countdown HUD (Real live ticking future timestamp) -->
+      <div class="countdown-hud reveal-elem">
+        <div class="countdown-hud-header">
+          <span class="countdown-hud-title">
+            <i data-lucide="radio" width="12" height="12"></i>
+            T-MINUS COUNTDOWN
+          </span>
+          <span class="countdown-hud-location">HYDERABAD IST</span>
+        </div>
+        <div class="countdown-grid">
+          <div class="countdown-cell">
+            <span class="countdown-val" id="hud-days">42</span>
+            <span class="countdown-lbl">Days</span>
+          </div>
+          <div class="countdown-cell">
+            <span class="countdown-val" id="hud-hours">18</span>
+            <span class="countdown-lbl">Hours</span>
+          </div>
+          <div class="countdown-cell">
+            <span class="countdown-val" id="hud-mins">34</span>
+            <span class="countdown-lbl">Mins</span>
+          </div>
+          <div class="countdown-cell">
+            <span class="countdown-val" id="hud-secs">09</span>
+            <span class="countdown-lbl">Secs</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Metric Row -->
+      <div class="metric-ticker reveal-elem">
+        <div class="metric-item">
+          <span class="metric-num">02</span>
+          <span class="metric-lbl">Days of Competition</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-num">15+</span>
+          <span class="metric-lbl">Technical Arenas</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-num">₹1.5L+</span>
+          <span class="metric-lbl">Prize & Grants Pool</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-num">1,500+</span>
+          <span class="metric-lbl">Engineers & Hackers</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 3D Three.js Interactive Cyber Core Canvas -->
+    <div id="three-hero-container"></div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SECTION 01: WHY FESTRONIX (BENTO CARDS)
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="section-wrap" id="about">
+    <div class="section-header-box reveal-elem">
+      <div class="section-index">01 // WHY PARTICIPATE</div>
+      <h2 class="section-title">ENGINEERED FOR <span class="accent">EXCELLENCE</span></h2>
+      <p class="section-desc">
+        Festronix strips away generic college fest fluff. Every arena is built by engineers,
+        judged by industry experts, and structured to test real applied mastery.
+      </p>
+    </div>
+
+    <div class="bento-grid">
+      <!-- Card 1 (Large) -->
+      <div class="bento-col-8">
+        <div class="glass-card">
+          <div class="highlight-icon-box">
+            <i data-lucide="trophy" width="22" height="22"></i>
+          </div>
+          <h3 class="bento-title">₹1,50,000+ Merit Cash Pool</h3>
+          <p class="bento-text">
+            Compete for direct cash prizes distributed across every track, including
+            prestigious best-innovator cash awards, verified physical trophies, and
+            National Level Merit Certificates issued by Vardhaman College of Engineering.
+          </p>
+          <div class="bento-tag-row">
+            <span class="bento-tag">Instant Valedictory Payout</span>
+            <span class="bento-tag">VCE Accredited</span>
+            <span class="bento-tag">Hardware Grants</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="bento-col-4">
+        <div class="glass-card">
+          <div class="highlight-icon-box">
+            <i data-lucide="cpu" width="22" height="22"></i>
+          </div>
+          <h3 class="bento-title">High-Spec Hardware Labs</h3>
+          <p class="bento-text">
+            Direct access to advanced electronics workstations, mixed-signal oscilloscopes,
+            embedded FPGA dev boards, and high-speed campus LAN test networks.
+          </p>
+          <div class="bento-tag-row">
+            <span class="bento-tag">Rigol & Tektronix</span>
+            <span class="bento-tag">Gigabit LAN</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="bento-col-4">
+        <div class="glass-card">
+          <div class="highlight-icon-box">
+            <i data-lucide="network" width="22" height="22"></i>
+          </div>
+          <h3 class="bento-title">50+ Colleges Connected</h3>
+          <p class="bento-text">
+            Meet the sharpest student developers, drone pilots, and security researchers
+            from premier institutes across Telangana, Andhra Pradesh, Karnataka, and beyond.
+          </p>
+          <div class="bento-tag-row">
+            <span class="bento-tag">Pan-India Reach</span>
+            <span class="bento-tag">Cross-College Teams</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4 (Large) -->
+      <div class="bento-col-8">
+        <div class="glass-card">
+          <div class="highlight-icon-box">
+            <i data-lucide="briefcase" width="22" height="22"></i>
+          </div>
+          <h3 class="bento-title">Recruitment & Incubation Opportunities</h3>
+          <p class="bento-text">
+            Keynotes, jury panels, and evaluation teams feature engineering leaders from top
+            tier tech firms and startup incubators scouting for exceptional undergraduate talent.
+            Top performers receive fast-tracked internship interviews.
+          </p>
+          <div class="bento-tag-row">
+            <span class="bento-tag">Angel Mentors</span>
+            <span class="bento-tag">Direct Fast-Track Interviews</span>
+            <span class="bento-tag">T-Hub Network</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SECTION 02: EVENT DOMAIN TRACKS & ARENAS (EXPANDABLE MODAL)
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="section-wrap" id="events">
+    <div class="section-header-box reveal-elem">
+      <div class="section-index">02 // COMPETITIVE ARENAS</div>
+      <h2 class="section-title">CHOOSE YOUR <span class="accent">BATTLEGROUND</span></h2>
+      <p class="section-desc">
+        Fifteen flagship competitions grouped into specialized tracks. Click any event
+        card to review rules, rounds structure, team size limits, and cash prizes.
+      </p>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="track-filter-bar reveal-elem">
+      <button class="track-tab-btn active" onclick="filterEvents('all', this)">All 15 Arenas</button>
+      <button class="track-tab-btn" onclick="filterEvents('software', this)">AI & Software</button>
+      <button class="track-tab-btn" onclick="filterEvents('hardware', this)">Robotics & Embedded</button>
+      <button class="track-tab-btn" onclick="filterEvents('security', this)">Cyber & Systems</button>
+      <button class="track-tab-btn" onclick="filterEvents('pitch', this)">Venture & Research</button>
+    </div>
+
+    <!-- Events Grid -->
+    <div class="events-showcase-grid" id="eventsGrid">
+
+      <!-- Event 1 -->
+      <div class="glass-card event-card-item" data-track="software">
+        <div>
+          <div class="event-top-meta">
+            <span class="event-category-chip">AI & Software</span>
+            <span class="event-team-chip">Team of 2-4</span>
+          </div>
+          <h3 class="event-item-title">24H Genesis Hackathon</h3>
+          <p class="event-item-desc">
+            An endurance sprint from problem statement to functional MVP. Solve challenges
+            in AI Agents, Smart Health, Green Tech, and Decentralized Systems.
+          </p>
+        </div>
+        <div class="event-bottom-bar">
+          <span class="event-prize-tag">₹40,000 Pool</span>
+          <button class="event-details-trigger" onclick="openEventModal('hackathon')">
+            <span>Rules & Specs</span>
+            <i data-lucide="chevron-right" width="14" height="14"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Event 2 -->
+      <div class="glass-card event-card-item" data-track="software">
+        <div>
+          <div class="event-top-meta">
+            <span class="event-category-chip">AI & Software</span>
+            <span class="event-team-chip">Solo / Team of 2</span>
+          </div>
+          <h3 class="event-item-title">Code Sprint Arena</h3>
+          <p class="event-item-desc">
+            Three rounds of hardcore algorithmic problem solving, dynamic programming,
+            and latency optimization under strict execution time limits.
+          </p>
+        </div>
+        <div class="event-bottom-bar">
+          <span class="event-prize-tag">₹15,000 Pool</span>
+          <button class="event-details-trigger" onclick="openEventModal('codesprint')">
+            <span>Rules & Specs</span>
+            <i data-lucide="chevron-right" width="14" height="14"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Event 3 -->
+      <div class="glass-card event-card-item" data-track="hardware">
+        <div>
+          <div class="event-top-meta">
+            <span class="event-category-chip">Robotics & Hardware</span>
+            <span class="event-team-chip">Team of 2-4</span>
+          </div>
+          <h3 class="event-item-title">Autonomous Robo Race</h3>
+          <p class="event-item-desc">
+            Test your rover's chassis speed and PID tuning across an aggressive custom
+            obstacle track with steep inclines, chicane turns, and sand pits.
+          </p>
+        </div>
+        <div class="event-bottom-bar">
+          <span class="event-prize-tag">₹20,000 Pool</span>
+          <button class="event-details-trigger" onclick="openEventModal('roborace')">
+            <span>Rules & Specs</span>
+            <i data-lucide="chevron-right" width="14" height="14"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Event 4 -->
+      <div class="glass-card event-card-item" data-track="hardware">
+        <div>
+          <div class="event-top-meta">
+            <span class="event-category-chip">Robotics & Hardware</span>
+            <span class="event-team-chip">Team of 2</span>
+          </div>
+          <h3 class="event-item-title">Silicon Circuit Debug</h3>
+          <p class="event-item-desc">
+            Diagnose pre-faulted analog and digital circuits on the physical breadboard.
+            Probe signals with CROs, replace faulty components, and restore output.
+          </p>
+        </div>
+        <div class="event-bottom-bar">
+          <span class="event-prize-tag">₹12,000 Pool</span>
+          <button class="event-details-trigger" onclick="openEventModal('circuitdebug')">
+            <span>Rules & Specs</span>
+            <i data-lucide="chevron-right" width="14" height="14"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Event 5 -->
+      <div class="glass-card event-card-item" data-track="security">
+        <div>
+          <div class="event-top-meta">
+            <span class="event-category-chip">Cyber & Systems</span>
+            <span class="event-team-chip">Team of 2-3</span>
+          </div>
+          <h3 class="event-item-title">Zero-Day Capture The Flag</h3>
+          <p class="event-item-desc">
+            Jeopardy-style security gauntlet covering Web Exploitation, Binary Analysis,
+            Memory Forensics, Cryptography, and Network Packet Infiltration.
+          </p>
+        </div>
+        <div class="event-bottom-bar">
+          <span class="event-prize-tag">₹18,000 Pool</span>
+          <button class="event-details-trigger" onclick="openEventModal('ctf')">
+            <span>Rules & Specs</span>
+            <i data-lucide="chevron-right" width="14" height="14"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Event 6 -->
+      <div class="glass-card event-card-item" data-track="security">
+        <div>
+          <div class="event-top-meta">
+            <span class="event-category-chip">Cyber & Systems</span>
+            <span class="event-team-chip">Solo</span>
+          </div>
+          <h3 class="event-item-title">SQL Benchmark Battle</h3>
+          <p class="event-item-desc">
+            Construct complex relational queries, optimize execution plans for million-row
+            datasets, and resolve database deadlocks against ticking clocks.
+          </p>
+        </div>
+        <div class="event-bottom-bar">
+          <span class="event-prize-tag">₹10,000 Pool</span>
+          <button class="event-details-trigger" onclick="openEventModal('sql')">
+            <span>Rules & Specs</span>
+            <i data-lucide="chevron-right" width="14" height="14"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Event 7 -->
+      <div class="glass-card event-card-item" data-track="pitch">
+        <div>
+          <div class="event-top-meta">
+            <span class="event-category-chip">Venture & Research</span>
+            <span class="event-team-chip">Team of 1-3</span>
+          </div>
+          <h3 class="event-item-title">Venture Idea Pitch</h3>
+          <p class="event-item-desc">
+            Pitch your prototype or deep-tech startup concept to early-stage founders and
+            angel mentors. Evaluated on market viability, moat, and execution roadmap.
+          </p>
+        </div>
+        <div class="event-bottom-bar">
+          <span class="event-prize-tag">₹20,000 Pool</span>
+          <button class="event-details-trigger" onclick="openEventModal('pitch')">
+            <span>Rules & Specs</span>
+            <i data-lucide="chevron-right" width="14" height="14"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Event 8 -->
+      <div class="glass-card event-card-item" data-track="pitch">
+        <div>
+          <div class="event-top-meta">
+            <span class="event-category-chip">Venture & Research</span>
+            <span class="event-team-chip">Team of 2</span>
+          </div>
+          <h3 class="event-item-title">National Paper Symposium</h3>
+          <p class="event-item-desc">
+            Present peer-reviewed style research papers across Embedded AI, Quantum Computing,
+            Clean Energy, and Advanced Robotics before a senior academic jury.
+          </p>
+        </div>
+        <div class="event-bottom-bar">
+          <span class="event-prize-tag">₹12,000 Pool</span>
+          <button class="event-details-trigger" onclick="openEventModal('paper')">
+            <span>Rules & Specs</span>
+            <i data-lucide="chevron-right" width="14" height="14"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Event 9 -->
+      <div class="glass-card event-card-item" data-track="software">
+        <div>
+          <div class="event-top-meta">
+            <span class="event-category-chip">AI & Software</span>
+            <span class="event-team-chip">Team of 3</span>
+          </div>
+          <h3 class="event-item-title">Turing Tech Quiz</h3>
+          <p class="event-item-desc">
+            Rapid-fire buzzer rounds testing computer architecture, tech trivia, obscure
+            operating system history, and logic puzzles.
+          </p>
+        </div>
+        <div class="event-bottom-bar">
+          <span class="event-prize-tag">₹10,000 Pool</span>
+          <button class="event-details-trigger" onclick="openEventModal('quiz')">
+            <span>Rules & Specs</span>
+            <i data-lucide="chevron-right" width="14" height="14"></i>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SECTION 03: 2-DAY INTERACTIVE TIMELINE / SCHEDULE
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="section-wrap" id="schedule">
+    <div class="section-header-box reveal-elem">
+      <div class="section-index">03 // RUN OF SHOW</div>
+      <h2 class="section-title">TWO DAYS. <span class="accent">48 HOURS.</span></h2>
+      <p class="section-desc">
+        A synchronized schedule so you can compete across multiple arenas without clashes.
+        Toggle between Day 01 and Day 02 to view the timetable.
+      </p>
+    </div>
+
+    <!-- Day Selector -->
+    <div class="schedule-tab-switch reveal-elem">
+      <button class="schedule-tab active" id="tabDay1Btn" onclick="switchScheduleDay(1)">
+        DAY 01 // QUALIFIERS
+      </button>
+      <button class="schedule-tab" id="tabDay2Btn" onclick="switchScheduleDay(2)">
+        DAY 02 // FINALS & EXPO
+      </button>
+    </div>
+
+    <!-- Timeline List -->
+    <div class="timeline-container" id="scheduleTimeline">
+      <!-- Generated via JS for fluid transitions -->
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SECTION 04: VENUE & TELEMETRY
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="section-wrap" id="venue">
+    <div class="section-header-box reveal-elem">
+      <div class="section-index">04 // LOCATION & TRANSIT</div>
+      <h2 class="section-title">HOSTED AT <span class="accent">VCE HYDERABAD</span></h2>
+      <p class="section-desc">
+        Vardhaman College of Engineering is an autonomous campus situated in Shamshabad,
+        conveniently connected via Outer Ring Road (ORR) and Hyderabad International Airport.
+      </p>
+    </div>
+
+    <div class="glass-card venue-glass-layout reveal-elem">
+      <div>
+        <h3 style="font-family: var(--font-display); font-size: 24px; font-weight: 700; color: var(--text-hero);">
+          Vardhaman College of Engineering
+        </h3>
+        <p style="font-size: 14px; color: var(--text-secondary); margin-top: 6px;">
+          Autonomous Institution affiliated to JNTUH · Accredited by NAAC with 'A++' Grade
+        </p>
+
+        <div class="venue-details-list">
+          <div class="venue-detail-row">
+            <div class="venue-icon-round"><i data-lucide="map-pin" width="16" height="16"></i></div>
+            <div>
+              <strong style="color: var(--text-primary); display: block;">Campus Address</strong>
+              <span>Kacharam, Shamshabad, Hyderabad, Telangana — 501218</span>
+            </div>
+          </div>
+
+          <div class="venue-detail-row">
+            <div class="venue-icon-round"><i data-lucide="plane" width="16" height="16"></i></div>
+            <div>
+              <strong style="color: var(--text-primary); display: block;">Airport Proximity</strong>
+              <span>25 Minutes from Rajiv Gandhi International Airport (RGIA)</span>
+            </div>
+          </div>
+
+          <div class="venue-detail-row">
+            <div class="venue-icon-round"><i data-lucide="bus" width="16" height="16"></i></div>
+            <div>
+              <strong style="color: var(--text-primary); display: block;">College Bus Connectivity</strong>
+              <span>Free shuttle points from Mehdipatnam, Aramghar, and Shamshabad junction</span>
+            </div>
+          </div>
+
+          <div class="venue-detail-row">
+            <div class="venue-icon-round"><i data-lucide="home" width="16" height="16"></i></div>
+            <div>
+              <strong style="color: var(--text-primary); display: block;">Accommodation Support</strong>
+              <span>Hostel lodging available for outstation participants with advance pass booking</span>
+            </div>
+          </div>
+        </div>
+
+        <a href="https://maps.google.com/?q=Vardhaman+College+of+Engineering" target="_blank" rel="noopener" class="btn-hero-secondary" style="height: 44px; display: inline-flex;">
+          <i data-lucide="external-link" width="14" height="14"></i>
+          <span>Open Coordinates in Google Maps</span>
+        </a>
+      </div>
+
+      <div class="venue-map-frame">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3811.8!2d78.52!3d17.24!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcba3!2sVardhaman+College+of+Engineering!5e0!3m2!1sen!2sin"
+          loading="lazy"
+          title="VCE Hyderabad Location Map">
+        </iframe>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SECTION 05: REGISTRATION PASS DECK
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="section-wrap" id="passes">
+    <div class="section-header-box reveal-elem">
+      <div class="section-index">05 // FEST REGISTRATION</div>
+      <h2 class="section-title">RESERVE YOUR <span class="accent">FEST PASS</span></h2>
+      <p class="section-desc">
+        All passes include access to technical keynotes, campus lunch, participation certificates,
+        and official Festronix developer kits.
+      </p>
+    </div>
+
+    <div class="passes-grid">
+      <!-- Tier 1 -->
+      <div class="glass-card pass-card">
+        <div>
+          <h3 class="pass-tier-name">Explorer Pass</h3>
+          <p class="pass-tier-desc">Ideal for students attending workshops and observing events.</p>
+          <div class="pass-price-row">
+            <span class="pass-price">₹199</span>
+            <span style="font-family: var(--font-mono); font-size: 12px; color: var(--text-muted);">/ person</span>
+          </div>
+          <ul class="pass-perks-list">
+            <li class="pass-perk-item"><i data-lucide="check" width="16" height="16"></i> Keynote & Tech Symposium Entry</li>
+            <li class="pass-perk-item"><i data-lucide="check" width="16" height="16"></i> Turing Tech Quiz Access</li>
+            <li class="pass-perk-item"><i data-lucide="check" width="16" height="16"></i> Official Attendee Badge & Swag</li>
+            <li class="pass-perk-item"><i data-lucide="check" width="16" height="16"></i> Participation Certificate</li>
+          </ul>
+        </div>
+        <button class="btn-pass-action" onclick="claimPassAlert('Explorer Pass')">Select Explorer Pass</button>
+      </div>
+
+      <!-- Tier 2 (Featured) -->
+      <div class="glass-card pass-card featured">
+        <span class="featured-ribbon">Most Popular</span>
+        <div>
+          <h3 class="pass-tier-name">Competitor Pass</h3>
+          <p class="pass-tier-desc">Full competition entry for coding, robotics, and hardware arenas.</p>
+          <div class="pass-price-row">
+            <span class="pass-price">₹399</span>
+            <span style="font-family: var(--font-mono); font-size: 12px; color: var(--text-muted);">/ competitor</span>
+          </div>
+          <ul class="pass-perks-list">
+            <li class="pass-perk-item"><i data-lucide="check" width="16" height="16"></i> Entry to ANY 3 Technical Competitions</li>
+            <li class="pass-perk-item"><i data-lucide="check" width="16" height="16"></i> Cash Prize & Trophy Eligibility</li>
+            <li class="pass-perk-item"><i data-lucide="check" width="16" height="16"></i> Both Days Catered Lunch & Refreshments</li>
+            <li class="pass-perk-item"><i data-lucide="check" width="16" height="16"></i> Festronix Swag Kit + Stickers + Lanyard</li>
+            <li class="pass-perk-item"><i data-lucide="check" width="16" height="16"></i> Accredited Merit / Participation Certificate</li>
+          </ul>
+        </div>
+        <button class="btn-pass-action" onclick="claimPassAlert('Competitor Pass')">Claim Competitor Pass</button>
+      </div>
+
+      <!-- Tier 3 -->
+      <div class="glass-card pass-card">
+        <div>
+          <h3 class="pass-tier-name">Hackathon Squad</h3>
+          <p class="pass-tier-desc">Complete team access for the 24H Genesis Hackathon.</p>
+          <div class="pass-price-row">
+            <span class="pass-price">₹999</span>
+            <span style="font-family: var(--font-mono); font-size: 12px; color: var(--text-muted);">/ team of 4</span>
+          </div>
+          <ul class="pass-perks-list">
+            <li class="pass-perk-item"><i data-lucide="check" width="16" height="16"></i> 4-Member Full Hackathon Entry</li>
+            <li class="pass-perk-item"><i data-lucide="check" width="16" height="16"></i> Overnight Lab Workstations & High-Speed LAN</li>
+            <li class="pass-perk-item"><i data-lucide="check" width="16" height="16"></i> Midnight Pizza, Red Bull & Morning Breakfast</li>
+            <li class="pass-perk-item"><i data-lucide="check" width="16" height="16"></i> 1-on-1 Mentorship Sessions</li>
+            <li class="pass-perk-item"><i data-lucide="check" width="16" height="16"></i> Eligibility for ₹40,000 Hackathon Pool</li>
+          </ul>
+        </div>
+        <button class="btn-pass-action" onclick="claimPassAlert('Hackathon Squad Pass')">Register Team Squad</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SECTION 06: FAQ ACCORDION (ZENITH SPLIT)
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="section-wrap" id="faq">
+    <div class="faq-layout-split">
+      <div class="reveal-elem">
+        <div class="section-index">06 // INQUIRIES & FAQ</div>
+        <h2 class="section-title">QUESTIONS, <span class="accent">ANSWERED</span></h2>
+        <p class="section-desc">
+          Got doubts regarding eligibility, team formations, or campus entry?
+          Reach our student lead team directly:
+        </p>
+        <div style="margin-top: 24px;">
+          <a href="mailto:festronix@vardhaman.org" style="font-family: var(--font-mono); font-size: 13px; color: var(--cyan); text-decoration: none; display: flex; align-items: center; gap: 8px;">
+            <i data-lucide="mail" width="15" height="15"></i>
+            <span>festronix@vardhaman.org ↗</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="faq-accordion-group reveal-elem">
+        <!-- Q1 -->
+        <div class="faq-row active">
+          <button class="faq-header-btn" onclick="toggleFaqAccordion(this)">
+            <span>Who is eligible to participate in Festronix '26?</span>
+            <div class="faq-icon-rotator"><i data-lucide="plus" width="16" height="16"></i></div>
+          </button>
+          <div class="faq-body-content">
+            <p>
+              Any undergraduate (B.Tech, B.E., B.Sc, BCA) or postgraduate (M.Tech, MCA) student currently enrolled in a recognized institution with a valid college ID card can participate. Cross-college teams are permitted for both hackathons and technical events.
+            </p>
+          </div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="faq-row">
+          <button class="faq-header-btn" onclick="toggleFaqAccordion(this)">
+            <span>Can one participant enter multiple events across the two days?</span>
+            <div class="faq-icon-rotator"><i data-lucide="plus" width="16" height="16"></i></div>
+          </button>
+          <div class="faq-body-content">
+            <p>
+              Yes! The 2-day schedule is arranged with non-overlapping major slots. A Competitor Pass grants you entry to up to 3 separate events as long as their physical rounds do not collide on the timeline.
+            </p>
+          </div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="faq-row">
+          <button class="faq-header-btn" onclick="toggleFaqAccordion(this)">
+            <span>What hardware or software equipment should participants bring?</span>
+            <div class="faq-icon-rotator"><i data-lucide="plus" width="16" height="16"></i></div>
+          </button>
+          <div class="faq-body-content">
+            <p>
+              For Code Sprint and the Hackathon, bring your personal laptops, power adapters, and chargers. For Robo Race, bring your custom chassis, LiPo batteries, and transmitters. For Circuit Debug and SQL battles, testing rigs and desktop machines are supplied in the campus labs.
+            </p>
+          </div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="faq-row">
+          <button class="faq-header-btn" onclick="toggleFaqAccordion(this)">
+            <span>Is hostel accommodation provided for participants outside Hyderabad?</span>
+            <div class="faq-icon-rotator"><i data-lucide="plus" width="16" height="16"></i></div>
+          </button>
+          <div class="faq-body-content">
+            <p>
+              Yes. Supervised campus hostel rooms (separate wings for boys and girls) are available on a nominal first-come reservation basis. Contact the student welfare desk immediately after claiming your pass.
+            </p>
+          </div>
+        </div>
+
+        <!-- Q5 -->
+        <div class="faq-row">
+          <button class="faq-header-btn" onclick="toggleFaqAccordion(this)">
+            <span>When and how are the cash prizes distributed?</span>
+            <div class="faq-icon-rotator"><i data-lucide="plus" width="16" height="16"></i></div>
+          </button>
+          <div class="faq-body-content">
+            <p>
+              Prize money is handed over directly during the Day 02 Valedictory Ceremony in the VCE Main Auditorium via physical award cheques and direct bank transfer verification to ensure transparent, instant payout.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       INTERACTIVE EVENT RULES MODAL DIALOG
+       ═══════════════════════════════════════════════════════════════ -->
+  <div class="modal-backdrop" id="eventModalBackdrop" onclick="closeEventModalOnBackdrop(event)">
+    <div class="modal-box">
+      <button class="modal-close-btn" onclick="closeEventModal()">
+        <i data-lucide="x" width="18" height="18"></i>
+      </button>
+
+      <div class="modal-category-tag" id="modalCategory">TRACK DETAILS</div>
+      <h3 class="modal-event-title" id="modalTitle">Event Title</h3>
+
+      <div class="modal-info-pills">
+        <span class="modal-pill" id="modalPrize">Prize: ₹20,000</span>
+        <span class="modal-pill" id="modalTeam">Team Size: 2-4</span>
+        <span class="modal-pill" id="modalVenue">Venue: Main Lab</span>
+      </div>
+
+      <h4 class="modal-section-h4">Event Overview</h4>
+      <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.7;" id="modalDesc">
+        Event brief will appear here.
+      </p>
+
+      <h4 class="modal-section-h4">Rounds & Evaluation Guidelines</h4>
+      <ul class="modal-guidelines-list" id="modalGuidelines">
+        <li>Round 1: Initial qualifier & constraint verification.</li>
+        <li>Round 2: Live jury evaluation & presentation defense.</li>
+      </ul>
+
+      <div style="margin-top: 32px; display: flex; gap: 12px;">
+        <a href="#passes" onclick="closeEventModal()" class="btn-hero-primary" style="flex: 1; justify-content: center; height: 46px;">
+          <span>Register for this Arena</span>
+          <i data-lucide="arrow-right" width="16" height="16"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       FOOTER & GIGANTIC WATERMARK (Zenith Inspired)
+       ═══════════════════════════════════════════════════════════════ -->
+  <footer class="site-footer">
+    <div class="footer-watermark-text">FESTRONIX</div>
+
+    <div class="footer-content-row">
+      <div class="footer-brand-col">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+          <span class="nav-badge-vce">VCE</span>
+          <span style="font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--text-hero);">
+            FESTRONIX <span style="color: var(--cyan);">'26</span>
+          </span>
+        </div>
+        <p class="footer-college-name">Vardhaman College of Engineering</p>
+        <p class="footer-sub-org">
+          Student Affairs Cell · Autonomous Institution approved by AICTE, accredited by NAAC A++ & NBA.
+          Kacharam, Shamshabad, Hyderabad, Telangana — 501218.
+        </p>
+      </div>
+
+      <div class="footer-links-group">
+        <div>
+          <div class="footer-col-title">Navigation</div>
+          <ul class="footer-nav-list">
+            <li><a href="#about">About Festronix</a></li>
+            <li><a href="#events">Competitions & Rules</a></li>
+            <li><a href="#schedule">Schedule & Timeline</a></li>
+            <li><a href="#venue">Transit & Venue Map</a></li>
+            <li><a href="#passes">Registration Passes</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Student Leads</div>
+          <ul class="footer-nav-list">
+            <li><a href="tel:+919876543210">+91 98765 43210 (Convenor)</a></li>
+            <li><a href="tel:+919876543211">+91 98765 43211 (Technical Lead)</a></li>
+            <li><a href="mailto:festronix@vardhaman.org">festronix@vardhaman.org</a></li>
+            <li><a href="#faq">Student Welfare Desk</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Social Connect</div>
+          <ul class="footer-nav-list">
+            <li><a href="https://instagram.com" target="_blank" rel="noopener">Instagram @festronix_vce ↗</a></li>
+            <li><a href="https://linkedin.com" target="_blank" rel="noopener">LinkedIn VCE Hyderabad ↗</a></li>
+            <li><a href="https://github.com" target="_blank" rel="noopener">GitHub Student Repos ↗</a></li>
+            <li><a href="https://discord.com" target="_blank" rel="noopener">Developer Discord ↗</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom-baseline">
+      <div>© 2026 VARDHAMAN COLLEGE OF ENGINEERING. ALL RIGHTS RESERVED.</div>
+      <div>TEL: 17.2400° N, 78.5200° E // SHAMSHABAD CAMPUS</div>
+    </div>
+  </footer>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       INTERACTIVE JAVASCRIPT ENGINE
+       Three.js 3D Model, Topographic Contours, Countdown & Audio Engine
+       ═══════════════════════════════════════════════════════════════ -->
+  <script>
+    // ── Lucide Icon Initialization ──
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) lucide.createIcons();
+    });
+
+    // ── Procedural Topographic Wave Canvas (Poster Waveform Emulation) ──
+    (function initTopographicWaves() {
+      const canvas = document.getElementById('topo-canvas');
+      const ctx = canvas.getContext('2d');
+      let width, height;
+      let mouseX = 0, mouseY = 0;
+      let targetMouseX = 0, targetMouseY = 0;
+
+      function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      window.addEventListener('mousemove', (e) => {
+        targetMouseX = (e.clientX / width - 0.5) * 120;
+        targetMouseY = (e.clientY / height - 0.5) * 120;
+      });
+
+      let time = 0;
+      function animate() {
+        time += 0.008;
+        mouseX += (targetMouseX - mouseX) * 0.05;
+        mouseY += (targetMouseY - mouseY) * 0.05;
+
+        ctx.clearRect(0, 0, width, height);
+
+        const lines = 18;
+        const step = height / (lines - 2);
+
+        for (let i = 0; i < lines; i++) {
+          const baseY = i * step;
+          ctx.beginPath();
+          ctx.strokeStyle = i % 3 === 0 ? 'rgba(0, 229, 255, 0.065)' : 'rgba(255, 255, 255, 0.025)';
+          ctx.lineWidth = i % 3 === 0 ? 1.2 : 0.8;
+
+          for (let x = 0; x <= width; x += 15) {
+            // Undulating topographic sine waves
+            const distanceToCenter = Math.abs(x - width / 2) / (width / 2);
+            const wave1 = Math.sin(x * 0.003 + time + i * 0.4) * 35;
+            const wave2 = Math.cos(x * 0.006 - time * 0.8 + i * 0.2) * 20;
+            const mouseInfluence = Math.sin((x / width) * Math.PI) * (mouseY * 0.5);
+
+            const y = baseY + (wave1 + wave2 + mouseInfluence) * (1 - distanceToCenter * 0.3);
+
+            if (x === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.stroke();
+        }
+
+        requestAnimationFrame(animate);
+      }
+      animate();
+    })();
+
+    // ── Three.js 3D Cyber Core Hologram (Hero Section Visual) ──
+    (function initThreeCore() {
+      const container = document.getElementById('three-hero-container');
+      if (!container || typeof THREE === 'undefined') return;
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+      camera.position.z = 4.2;
+
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      container.appendChild(renderer.domElement);
+
+      // Cyber Geometry 1: Metallic Iridescent Torus Knot
+      const knotGeo = new THREE.TorusKnotGeometry(1.05, 0.28, 128, 32, 2, 3);
+      const knotMat = new THREE.MeshStandardMaterial({
+        color: 0x050c18,
+        metalness: 0.95,
+        roughness: 0.15,
+        wireframe: false
+      });
+      const knotMesh = new THREE.Mesh(knotGeo, knotMat);
+      scene.add(knotMesh);
+
+      // Wireframe Hologram Outer Shell
+      const wireMat = new THREE.MeshBasicMaterial({
+        color: 0x00e5ff,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.22
+      });
+      const wireMesh = new THREE.Mesh(knotGeo, wireMat);
+      wireMesh.scale.set(1.02, 1.02, 1.02);
+      scene.add(wireMesh);
+
+      // Orbital Particle Ring
+      const particleCount = 240;
+      const particleGeo = new THREE.BufferGeometry();
+      const positions = new Float32Array(particleCount * 3);
+
+      for (let i = 0; i < particleCount; i++) {
+        const radius = 1.8 + Math.random() * 0.6;
+        const theta = Math.random() * Math.PI * 2;
+        const phi = (Math.random() - 0.5) * 1.2;
+
+        positions[i * 3]     = radius * Math.cos(theta) * Math.cos(phi);
+        positions[i * 3 + 1] = radius * Math.sin(phi);
+        positions[i * 3 + 2] = radius * Math.sin(theta) * Math.cos(phi);
+      }
+      particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+      const particleMat = new THREE.PointsMaterial({
+        color: 0x00e5ff,
+        size: 0.035,
+        transparent: true,
+        opacity: 0.75
+      });
+      const particleSystem = new THREE.Points(particleGeo, particleMat);
+      scene.add(particleSystem);
+
+      // Lights
+      const keyLight = new THREE.DirectionalLight(0x00e5ff, 2.5);
+      keyLight.position.set(3, 4, 3);
+      scene.add(keyLight);
+
+      const fillLight = new THREE.DirectionalLight(0x00ff9d, 1.4);
+      fillLight.position.set(-3, -2, -2);
+      scene.add(fillLight);
+
+      const ambientLight = new THREE.AmbientLight(0x081022, 1.2);
+      scene.add(ambientLight);
+
+      // Mouse interactivity with damping
+      let mouseX = 0, mouseY = 0;
+      let targetX = 0, targetY = 0;
+
+      window.addEventListener('mousemove', (e) => {
+        const rect = container.getBoundingClientRect();
+        targetX = ((e.clientX - rect.left) / container.clientWidth - 0.5) * 1.5;
+        targetY = ((e.clientY - rect.top) / container.clientHeight - 0.5) * 1.5;
+      });
+
+      function renderLoop() {
+        requestAnimationFrame(renderLoop);
+
+        mouseX += (targetX - mouseX) * 0.04;
+        mouseY += (targetY - mouseY) * 0.04;
+
+        knotMesh.rotation.x += 0.006;
+        knotMesh.rotation.y += 0.009;
+        wireMesh.rotation.x = knotMesh.rotation.x;
+        wireMesh.rotation.y = knotMesh.rotation.y;
+
+        knotMesh.rotation.z = mouseX * 0.5;
+        knotMesh.rotation.x += mouseY * 0.02;
+
+        particleSystem.rotation.y -= 0.003;
+        particleSystem.rotation.x += 0.001;
+
+        renderer.render(scene, camera);
+      }
+      renderLoop();
+
+      // Responsive Resize
+      window.addEventListener('resize', () => {
+        if (!container.clientWidth || !container.clientHeight) return;
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+      });
+    })();
+
+    // ── Real-Time Countdown HUD (Target Set to Active Future Event) ──
+    (function initCountdownHUD() {
+      // Future target timestamp: 45 days, 16 hours ahead of now to ensure live countdown
+      const TARGET_TIMESTAMP = Date.now() + (45 * 86400000) + (16 * 3600000) + (42 * 60000) + (18 * 1000);
+
+      function updateCountdown() {
+        const remaining = Math.max(0, TARGET_TIMESTAMP - Date.now());
+
+        const days = Math.floor(remaining / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((remaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const mins = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((remaining % (1000 * 60)) / 1000);
+
+        const dEl = document.getElementById('hud-days');
+        const hEl = document.getElementById('hud-hours');
+        const mEl = document.getElementById('hud-mins');
+        const sEl = document.getElementById('hud-secs');
+
+        if (dEl) dEl.textContent = String(days).padStart(2, '0');
+        if (hEl) hEl.textContent = String(hours).padStart(2, '0');
+        if (mEl) mEl.textContent = String(mins).padStart(2, '0');
+        if (sEl) sEl.textContent = String(secs).padStart(2, '0');
+      }
+
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+    })();
+
+    // ── Specular Mouse Sheen & 3D Tilt for Glass Cards ──
+    document.querySelectorAll('.glass-card').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        // Set CSS custom properties for radial specular sheen
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
+
+        // Subtle 3D perspective tilt
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const tiltX = ((y - centerY) / centerY) * -4;
+        const tiltY = ((x - centerX) / centerX) * 4;
+
+        card.style.transform = `perspective(800px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateY(-2px)`;
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0)';
+      });
+    });
+
+    // ── Schedule 2-Day Tab Switcher Data ──
+    const scheduleData = {
+      day1: [
+        { time: "09:00 AM", title: "Campus Check-in & Hardware Inspection", venue: "Main Quadrangle Desk", status: "Reporting" },
+        { time: "10:00 AM", title: "Grand Inaugural Ceremony & Keynote Address", venue: "VCE Main Auditorium", status: "Plenary" },
+        { time: "11:30 AM", title: "24H Genesis Hackathon: Official Problem Unveiling", venue: "Advanced Computing Lab Block A", status: "Live Arena" },
+        { time: "01:00 PM", title: "Networking Luncheon for Outstation Participants", venue: "Central Dining Pavilion", status: "Break" },
+        { time: "02:00 PM", title: "Code Sprint Arena: Qualifier Round 1", venue: "Lab Block B - 3rd Floor", status: "Competitive" },
+        { time: "03:30 PM", title: "Silicon Circuit Debugging: Breadboard Diagnostics", venue: "VLSI & Embedded Systems Lab", status: "Competitive" },
+        { time: "05:00 PM", title: "Zero-Day CTF: Network Capture Round Begins", venue: "Cyber Security Center of Excellence", status: "Competitive" }
+      ],
+      day2: [
+        { time: "09:00 AM", title: "Autonomous Robo Race: Qualifying Heats & Obstacle Run", venue: "Open Ground Arena Track", status: "Competitive" },
+        { time: "11:00 AM", title: "National Paper Presentation Symposium", venue: "Seminar Hall 1 & 2", status: "Jury Defense" },
+        { time: "12:30 PM", title: "24H Genesis Hackathon: Final Code Freeze & Commit", venue: "Computing Lab Block A", status: "Milestone" },
+        { time: "01:30 PM", title: "Venture Idea Pitch: Top 8 Finalist Presentations", venue: "Startup Incubation Center", status: "Pitch" },
+        { time: "03:30 PM", title: "Turing Tech Quiz: Rapid-Fire Final Round", venue: "Main Auditorium", status: "Finals" },
+        { time: "05:00 PM", title: "Grand Valedictory Ceremony & ₹1,50,000 Prize Handover", venue: "VCE Main Auditorium", status: "Celebration" }
+      ]
+    };
+
+    function renderSchedule(day) {
+      const container = document.getElementById('scheduleTimeline');
+      if (!container) return;
+
+      const events = day === 1 ? scheduleData.day1 : scheduleData.day2;
+      container.innerHTML = events.map(e => `
+        <div class="timeline-row">
+          <div class="timeline-time-col">${e.time}</div>
+          <div class="timeline-info-col">
+            <h4 class="timeline-slot-title">${e.title}</h4>
+            <span class="timeline-venue-chip">
+              <i data-lucide="map-pin" width="12" height="12"></i>
+              ${e.venue}
+            </span>
+          </div>
+          <span class="timeline-status-pill">${e.status}</span>
+        </div>
+      `).join('');
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function switchScheduleDay(day) {
+      const btn1 = document.getElementById('tabDay1Btn');
+      const btn2 = document.getElementById('tabDay2Btn');
+
+      if (day === 1) {
+        btn1.classList.add('active');
+        btn2.classList.remove('active');
+      } else {
+        btn2.classList.add('active');
+        btn1.classList.remove('active');
+      }
+      renderSchedule(day);
+      playSynthClick(520, 0.05);
+    }
+    renderSchedule(1);
+
+    // ── Event Track Filtering ──
+    function filterEvents(track, btn) {
+      document.querySelectorAll('.track-tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const cards = document.querySelectorAll('.event-card-item');
+      cards.forEach(card => {
+        if (track === 'all' || card.getAttribute('data-track') === track) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+      playSynthClick(440, 0.04);
+    }
+
+    // ── Interactive Event Modal Dialog ──
+    const eventDatabase = {
+      hackathon: {
+        title: "24H Genesis Hackathon",
+        category: "Track 01 // AI & Software Systems",
+        prize: "₹40,000 Cash Pool + Cloud Credits",
+        team: "2 to 4 Members",
+        venue: "Advanced Computing Lab Block A",
+        desc: "Build an end-to-end working software solution addressing real-world problem statements revealed at 11:30 AM Day 01. Themes include AI Automation Agents, Healthcare Tech, FinTech & Blockchain, and Climate Engineering.",
+        guidelines: [
+          "Code must be written during the 24-hour sprint and committed to a fresh public GitHub repo.",
+          "Pre-existing design components and open-source libraries are permitted; core logic must be built live.",
+          "Final submission requires a live deployed prototype and a 4-minute presentation to the industry jury."
+        ]
+      },
+      codesprint: {
+        title: "Code Sprint Arena",
+        category: "Track 01 // Competitive Algorithms",
+        prize: "₹15,000 Cash Pool",
+        team: "Solo or Team of 2",
+        venue: "Lab Block B - 3rd Floor",
+        desc: "Rapid algorithmic contest hosted on our local test server. Score points by solving problems spanning Graph Theory, Dynamic Programming, String Manipulation, and Bitwise Arithmetic.",
+        guidelines: [
+          "Languages allowed: C++, Java, Python 3, Rust, Go.",
+          "Scoring is evaluated on test cases passed and execution memory/time latency.",
+          "Plagiarism checks run automatically on test conclusion."
+        ]
+      },
+      roborace: {
+        title: "Autonomous Robo Race",
+        category: "Track 02 // Robotics & Embedded Systems",
+        prize: "₹20,000 Cash Pool",
+        team: "2 to 4 Members",
+        venue: "Open Ground Arena Track",
+        desc: "Design and race wired, wireless, or autonomous rovers across our rugged outdoor obstacle course featuring speed straightaways, 45-degree ramps, sand banks, and precision chicanes.",
+        guidelines: [
+          "Chassis dimensions must not exceed 30cm x 30cm x 30cm; maximum weight 4.5kg.",
+          "Maximum allowable battery potential: 24V DC.",
+          "Penalties apply for track perimeter boundary violations."
+        ]
+      },
+      circuitdebug: {
+        title: "Silicon Circuit Debug",
+        category: "Track 02 // Electronics Engineering",
+        prize: "₹12,000 Cash Pool",
+        team: "Team of 2",
+        venue: "VLSI & Embedded Systems Lab",
+        desc: "Hands-on hardware troubleshooting. Teams are given pre-damaged operational circuits on test benches with missing or burnt ICs, faulty resistors, and broken signal paths.",
+        guidelines: [
+          "Round 1: Rapid fault detection and logic gate diagram correction on paper.",
+          "Round 2: Practical component replacement and CRO wave verification on test benches.",
+          "Fastest team to achieve nominal reference waveform wins."
+        ]
+      },
+      ctf: {
+        title: "Zero-Day Capture The Flag (CTF)",
+        category: "Track 03 // Cybersecurity",
+        prize: "₹18,000 Cash Pool",
+        team: "2 to 3 Members",
+        venue: "Cyber Security Center of Excellence",
+        desc: "Attack-and-defend cybersecurity gauntlet. Hack simulated targets, bypass web authentication filters, inspect memory dumps, and extract hidden alphanumeric flags.",
+        guidelines: [
+          "Categories: Web Exploitation, Cryptography, Reverse Engineering, Forensics, Privilege Escalation.",
+          "Attacking scoring infrastructure or other participant hardware results in immediate disqualification.",
+          "Flags must be submitted in the format: FESTRONIX{flag_string}."
+        ]
+      },
+      sql: {
+        title: "SQL Benchmark Battle",
+        category: "Track 01 // Databases & Systems",
+        prize: "₹10,000 Cash Pool",
+        team: "Solo Competitor",
+        venue: "Lab Block B - Room 204",
+        desc: "High-speed database querying and schema optimization. Solve multi-table subquery challenges and tune query performance on PostgreSQL datasets.",
+        guidelines: [
+          "Time-trial format across 2 intense rounds.",
+          "Points awarded for correctness, query simplicity, and lowest execution cost."
+        ]
+      },
+      pitch: {
+        title: "Venture Idea Pitch",
+        category: "Track 04 // Venture & Entrepreneurship",
+        prize: "₹20,000 Cash Pool + Incubation Support",
+        team: "1 to 3 Members",
+        venue: "Startup Incubation Center",
+        desc: "Pitch an original deep-tech product concept or venture prototype before a jury of founders, venture partners, and incubation directors.",
+        guidelines: [
+          "5-minute pitch deck presentation followed by 3-minute Q&A defense.",
+          "Evaluation criteria: Problem severity, market size, unfair technical advantage, and execution clarity."
+        ]
+      },
+      paper: {
+        title: "National Paper Presentation Symposium",
+        category: "Track 04 // Academic Research",
+        prize: "₹12,000 Cash Pool + Publication Badges",
+        team: "Team of 2",
+        venue: "Seminar Hall 1 & 2",
+        desc: "Defend your engineering research paper across AI/ML architectures, Autonomous Systems, VLSI Design, or Renewable Energy before an academic review board.",
+        guidelines: [
+          "Presentation time limit: 8 minutes + 2 minutes Q&A.",
+          "Accepted papers receive formal conference publication consideration."
+        ]
+      },
+      quiz: {
+        title: "Turing Tech Quiz",
+        category: "Track 01 // Tech Foundations",
+        prize: "₹10,000 Cash Pool",
+        team: "Team of 3",
+        venue: "VCE Main Auditorium",
+        desc: "Buzzer-based trivia round covering computer architecture history, tech lore, Silicon Valley milestones, and obscure hacker culture.",
+        guidelines: [
+          "Round 1: Written 30-question screening quiz.",
+          "Round 2: Top 6 teams advance to the live auditorium buzzer stage."
+        ]
+      }
+    };
+
+    function openEventModal(eventKey) {
+      const data = eventDatabase[eventKey];
+      if (!data) return;
+
+      document.getElementById('modalTitle').textContent = data.title;
+      document.getElementById('modalCategory').textContent = data.category;
+      document.getElementById('modalPrize').textContent = `Prize: ${data.prize}`;
+      document.getElementById('modalTeam').textContent = `Team: ${data.team}`;
+      document.getElementById('modalVenue').textContent = `Venue: ${data.venue}`;
+      document.getElementById('modalDesc').textContent = data.desc;
+
+      const guidelinesEl = document.getElementById('modalGuidelines');
+      guidelinesEl.innerHTML = data.guidelines.map(g => `<li>${g}</li>`).join('');
+
+      document.getElementById('eventModalBackdrop').classList.add('open');
+      document.body.style.overflow = 'hidden';
+      playSynthClick(600, 0.06);
+    }
+
+    function closeEventModal() {
+      document.getElementById('eventModalBackdrop').classList.remove('open');
+      document.body.style.overflow = '';
+      playSynthClick(380, 0.04);
+    }
+
+    function closeEventModalOnBackdrop(e) {
+      if (e.target.id === 'eventModalBackdrop') {
+        closeEventModal();
+      }
+    }
+
+    // ── FAQ Accordion ──
+    function toggleFaqAccordion(btn) {
+      const row = btn.closest('.faq-row');
+      const wasActive = row.classList.contains('active');
+
+      document.querySelectorAll('.faq-row').forEach(r => r.classList.remove('active'));
+      if (!wasActive) {
+        row.classList.add('active');
+        playSynthClick(480, 0.05);
+      } else {
+        playSynthClick(320, 0.03);
+      }
+    }
+
+    // ── Mobile Drawer ──
+    function toggleMobileDrawer() {
+      const drawer = document.getElementById('mobileDrawer');
+      drawer.classList.toggle('open');
+    }
+
+    // ── Web Audio API Tactile Sound Engine (Zero External Audio Files) ──
+    let audioContext = null;
+    let soundEnabled = true;
+
+    function playSynthClick(freq = 440, duration = 0.05) {
+      if (!soundEnabled) return;
+      try {
+        if (!audioContext) {
+          audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioContext.state === 'suspended') {
+          audioContext.resume();
+        }
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, audioContext.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(freq * 0.5, audioContext.currentTime + duration);
+
+        gain.gain.setValueAtTime(0.06, audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
+
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+
+        osc.start();
+        osc.stop(audioContext.currentTime + duration);
+      } catch (err) {
+        // Silently pass if browser blocks autoplay audio
+      }
+    }
+
+    const audioToggleBtn = document.getElementById('audioToggleBtn');
+    if (audioToggleBtn) {
+      audioToggleBtn.addEventListener('click', () => {
+        soundEnabled = !soundEnabled;
+        audioToggleBtn.style.color = soundEnabled ? 'var(--cyan)' : 'var(--text-muted)';
+        if (soundEnabled) playSynthClick(640, 0.08);
+      });
+    }
+
+    // ── Registration Pass Claim Demo ──
+    function claimPassAlert(tierName) {
+      playSynthClick(700, 0.08);
+      alert(`[PASS RESERVATION INITIATED]\nYou have selected the "${tierName}". You will be redirected to the official VCE Student Affairs registration portal.`);
+    }
+
+    // ── Scroll Reveal Intersection Observer ──
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal-elem').forEach(el => revealObserver.observe(el));
+  </script>
+</body>
+</html>
