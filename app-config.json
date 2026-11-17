@@ -1,6 +1,6 @@
 {
   "command": "node server.js",
-  "build_command": "npx prisma generate && npm run build",
+  "build_path": ".",
   "stack": "node18",
   "env_variables": {
     "NODE_ENV": "production",
